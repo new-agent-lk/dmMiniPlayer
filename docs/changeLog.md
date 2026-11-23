@@ -1,3 +1,7 @@
+## v0.6.66
+
+- 修复长时播放时弹幕数组只增不减导致的内存暴涨（新增弹幕内存上限，默认 3000 条）。
+
 ## v0.6.65
 Features:
 1. Added Kick live danmaku support, including sending danmaku after login
