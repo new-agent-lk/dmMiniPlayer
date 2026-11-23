@@ -1,3 +1,7 @@
+## v0.6.68
+
+- 修复控制台 `Canvas2D: Multiple readback operations using getImageData...` 警告：进度条预览帧的 canvas 上下文改用 `{ willReadFrequently: true }`（B站/YouTube 两处），减少 GPU 回读。
+
 ## v0.6.67
 
 - 新增画中画弹窗透明度调节：底部控制条按钮 + 设置项「弹窗透明度」，只淡出画面（video/canvas），控件保持清晰。
