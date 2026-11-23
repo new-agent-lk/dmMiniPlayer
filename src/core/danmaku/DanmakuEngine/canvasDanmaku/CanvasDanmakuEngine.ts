@@ -103,7 +103,6 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
     if (!this.media) throw Error('需要先调用init()')
     this.hasDraw = true
 
-    console.log('drawInSeek', this.danmakus)
     this.tunnelManager.resetTunnelsMap()
     this.nowPos = 0
     this.runningDanmakus.clear()
@@ -200,6 +199,10 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
     super.resetState()
     this.nowPos = 0
     this.hasDraw = false
+  }
+
+  protected override onDanmakusTrimmed(drop: number) {
+    this.nowPos = Math.max(0, this.nowPos - drop)
   }
 
   override forceRerenderDanmaku(): void {

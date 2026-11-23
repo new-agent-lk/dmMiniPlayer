@@ -2,6 +2,8 @@
   "settingPanel": {
     "renderFPS": "Canvas FPS limit",
     "renderFPSDesc": "Danmakus rendering FPS. Setting 0 is no upper limit. If it is the old version of PIP or [Dual Video Mode] mode, the video will be affected by this",
+    "maxDanmakuCount": "Max danmakus kept in memory",
+    "maxDanmakuCountDesc": "Keep only the most recent N danmakus and drop the oldest, so memory stops growing during long playback. 0 = unlimited (not recommended).",
     "FPS_limitOffsetAccurate": "FPS limiting algorithm uses precise now time",
     "FPS_limitOffsetAccurateDesc": "The default recorded last update time is now - (offset % renderFPS)",
     "videoNoBorder": "Adaptive size",

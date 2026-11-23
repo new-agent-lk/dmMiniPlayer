@@ -118,7 +118,6 @@ export default class BilibiliLiveBarrageClient extends BarrageClient {
         }
       }
 
-      console.log('danmu', text, info)
       this.emit('danmu', { color, text, imageMap })
     })
   }

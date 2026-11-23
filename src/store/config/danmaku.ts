@@ -53,6 +53,12 @@ const config_danmaku = {
     relateBy: 'useHtmlDanmaku',
     relateByValue: false,
   }),
+  // 长时间播放时 danmakus 数组只增不减会吃满内存，超过上限丢最旧的
+  maxDanmakuCount: config({
+    defaultValue: 3000,
+    label: t('settingPanel.maxDanmakuCount'),
+    desc: t('settingPanel.maxDanmakuCountDesc'),
+  }),
   danSpeed: config({
     defaultValue: 20,
     label: t('settingPanel.danSpeed'),

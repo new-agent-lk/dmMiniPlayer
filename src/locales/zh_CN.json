@@ -2,6 +2,8 @@
   "settingPanel": {
     "renderFPS": "canvas渲染的帧数",
     "renderFPSDesc": "限制弹幕渲染帧数，设置0就是无上限。如果是旧版画中画或[双视频模式]模式，视频会受此影响",
+    "maxDanmakuCount": "弹幕内存上限（条）",
+    "maxDanmakuCountDesc": "只保留最近这么多条弹幕，超出丢弃最旧的，防止长时间播放内存一直涨；0 表示不限制（不建议）",
     "FPS_limitOffsetAccurate": "FPS限制算法使用精准now时间",
     "FPS_limitOffsetAccurateDesc": "默认记录的上一次更新时间是now - (offset % renderFPS)",
     "videoNoBorder": "自适应边框",

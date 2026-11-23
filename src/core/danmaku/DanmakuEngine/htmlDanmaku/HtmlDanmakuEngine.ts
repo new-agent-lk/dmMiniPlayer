@@ -207,6 +207,10 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
     }
   }
 
+  protected override onDanmakusTrimmed(drop: number) {
+    this.nowPos = Math.max(0, this.nowPos - drop)
+  }
+
   override forceRerenderDanmaku(): void {
     super.forceRerenderDanmaku()
     this.nowPos = 0

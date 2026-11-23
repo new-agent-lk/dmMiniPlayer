@@ -78,6 +78,9 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
   get fontShadow() {
     return configStore.fontShadow
   }
+  get maxDanmakuCount() {
+    return configStore.maxDanmakuCount
+  }
 
   get disableOnlyImageDanmaku() {
     return configStore.disableOnlyImageDanmaku
@@ -181,7 +184,17 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
         })
       }),
     )
+    // shortcut: 按条数上限丢最旧；长视频大幅回拖后最早那批可能已被丢弃，需要时把上限调大
+    const max = this.maxDanmakuCount
+    if (max > 0 && this.danmakus.length > max) {
+      const drop = this.danmakus.length - max
+      this.danmakus.splice(0, drop)
+      this.onDanmakusTrimmed(drop)
+    }
   }
+
+  /** 丢弃最旧的 drop 条弹幕后，子类用它同步修正自己的扫描游标 */
+  protected onDanmakusTrimmed(_drop: number) {}
 
   async setDanmakus(danmakus: DanmakuInitData[]) {
     await this.initLock.waiting()
