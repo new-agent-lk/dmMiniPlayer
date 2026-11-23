@@ -61,7 +61,8 @@ export default class BiliBiliPreviewManager extends VideoPreviewManager {
     canvas.width = this.data.xCount * this.data.xSize
     canvas.height = this.data.yCount * this.data.ySize
 
-    const ctx = canvas.getContext('2d')
+    // 这个 ctx 后面会被反复 getImageData 抠预览帧，声明 willReadFrequently 避免 GPU 回读警告
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
     if (!ctx) return
 
     const imgElement = new Image()
