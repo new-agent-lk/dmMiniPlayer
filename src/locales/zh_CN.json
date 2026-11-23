@@ -49,6 +49,8 @@
     "danVerticalSafeTime": "垂直弹幕停留时间",
     "opacity": "弹幕透明度",
     "opacityDesc": "范围0 ~ 1",
+    "pipOpacity": "弹窗透明度",
+    "pipOpacityDesc": "整个画中画画面的透明度，渐隐到黑。浏览器不支持窗口真透明（看不见桌面）",
     "fontSize": "弹幕字体大小",
     "fontWeight": "弹幕字体宽度",
     "fontFamily": "弹幕字体",

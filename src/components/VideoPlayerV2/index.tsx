@@ -44,6 +44,7 @@ import ActionButton from './bottomPanel/ActionButton'
 import CurrentTimeTooltipsWithKeydown from './bottomPanel/CurrentTimeTooltipsWithKeydown'
 import DanmakuSettingBtn from './bottomPanel/DanmakuSettingBtn'
 import SharpeningButton from './bottomPanel/SharpeningButton'
+import PipOpacityButton from './bottomPanel/PipOpacityButton'
 import PlaybackRateSelection from './bottomPanel/PlaybackRateSelection'
 import PlayedTime from './bottomPanel/PlayedTime'
 import PlayerProgressBar from './bottomPanel/PlayerProgressBar'
@@ -509,6 +510,8 @@ const VideoPlayerV2Inner = observer(
                   {configStore.bp_playbackRate && <PlaybackRateSelection />}
 
                   {configStore.bp_sharpening && <SharpeningButton />}
+
+                  {isDocPIP(videoPlayerRef.current) && <PipOpacityButton />}
 
                   <ActionButton
                     onClick={handleOpenSetting}

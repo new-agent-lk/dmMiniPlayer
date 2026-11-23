@@ -249,6 +249,7 @@ export default class DocPIPWebProvider extends WebProvider {
 video{
   width: 100%;
   height: 100%;
+  opacity: var(--pip-opacity, 1);
 }
 canvas{
   position: fixed;
@@ -257,9 +258,18 @@ canvas{
   z-index: 10;
   width: 100%;
   pointer-events: none;
+  opacity: var(--pip-opacity, 1);
 }`,
     })
     playerEl.appendChild(docPIPRootStyle)
+
+    // 弹窗画面透明度：浏览器不给窗口级透明，只能让画面朝 body 的黑底淡出。
+    // 只淡 video/canvas，控件保持清晰，否则滑到低值后连滑块都看不见、无法调回
+    this.addOnUnloadFn(
+      autorun(() => {
+        playerEl.style.setProperty('--pip-opacity', String(configStore.pipOpacity))
+      }),
+    )
 
     const keepAlive = setInterval(() => {
       sendMessage(WebextEvent.keepAlive, null)

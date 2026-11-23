@@ -49,6 +49,8 @@
     "danVerticalSafeTime": "Vertical danmaku alive time",
     "opacity": "Danmaku opacity",
     "opacityDesc": "Range in 0 ~ 1",
+    "pipOpacity": "PIP window opacity",
+    "pipOpacityDesc": "Opacity of the whole PIP picture, fading to black. Browsers cannot make the window itself transparent (you won't see the desktop)",
     "fontSize": "Danmaku font size",
     "fontWeight": "Danmaku font weight",
     "fontFamily": "Danmaku font",

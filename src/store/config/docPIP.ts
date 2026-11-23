@@ -69,6 +69,14 @@ export const docPIPConfig = {
     relateByValue: MovePIPAfterOpenType.custom,
   }),
   // ---
+  pipOpacity: config({
+    label: t('settingPanel.pipOpacity'),
+    desc: t('settingPanel.pipOpacityDesc'),
+    defaultValue: 1,
+    type: 'range',
+    range: [0, 1],
+    rangeStep: 0.05,
+  }),
   quickHide_pos: config<Exclude<Position, Position.default>>({
     label: t('settingPanel.quickHide_pos'),
     defaultValue: Position['topLeft'],
