@@ -75,6 +75,7 @@ export default class VideoPlayerBase
 
   private unobserveVideoElChange = () => {}
   private unlistenOnClose = () => {}
+  private removeLoadedMetadata = () => {}
   protected onUnload() {}
 
   private src = ''
@@ -105,12 +106,17 @@ export default class VideoPlayerBase
 
     this.src = this.webVideoEl.src
 
-    this.webVideoEl.addEventListener('loadedmetadata', () => {
+    const onLoadedMetadata = () => {
       if (this.src !== this.webVideoEl.src) {
         this.src = this.webVideoEl.src
         this.emit(PlayerEvent.videoSrcChanged)
       }
-    })
+    }
+    this.webVideoEl.addEventListener('loadedmetadata', onLoadedMetadata)
+    this.removeLoadedMetadata = () => {
+      this.webVideoEl?.removeEventListener('loadedmetadata', onLoadedMetadata)
+      this.removeLoadedMetadata = () => {}
+    }
 
     runInAction(() => {
       if (this.danmakuSender) {
@@ -127,6 +133,7 @@ export default class VideoPlayerBase
   async unload() {
     this.emit(PlayerEvent.videoPlayerBeforeUnload)
     this.unlistenOnClose()
+    this.removeLoadedMetadata()
     await this.onUnload()
     this.emit(PlayerEvent.videoPlayerUnloaded)
   }

@@ -2,7 +2,7 @@ import API_bilibili from '@root/api/bilibili'
 import VideoPreviewManager, {
   VideoPreviewData,
 } from '@root/core/VideoPreviewManager'
-import { createElement, onceCallWithMap, switchLatest } from '@root/utils'
+import { createElement, switchLatest } from '@root/utils'
 import AsyncLock from '@root/utils/AsyncLock'
 import { OrPromise } from '@root/utils/typeUtils'
 
@@ -18,6 +18,7 @@ export default class BiliBiliPreviewManager extends VideoPreviewManager {
     this.asyncLock.ok()
 
     this.data = data
+    this.timeNodesMap.clear()
     for (let i = 0; i < data.timeNodes.length; i++) {
       this.timeNodesMap.set(data.timeNodes[i], i)
     }
@@ -55,52 +56,63 @@ export default class BiliBiliPreviewManager extends VideoPreviewManager {
     }
   })
 
-  getImageCanvasCtx = onceCallWithMap(async (img: string) => {
-    if (!this.data) return
+  /** 单槽缓存：只保留当前这一张雪碧图的解码结果，切图时立刻丢弃上一张。 */
+  private sprite: { img: string; promise: Promise<HTMLImageElement | null> } | null =
+    null
+
+  // shortcut: 只缓存一张雪碧图；跨图预览会重新解码一次。旧实现把每张 4800×2700 大图永久缓存（单张≈49MB，整片 6 张≈297MB 常驻），是长时播放内存暴涨的主因。
+  private loadSprite(img: string): Promise<HTMLImageElement | null> {
+    if (this.sprite?.img === img) return this.sprite.promise
+    const promise = (async () => {
+      const el = new Image()
+      el.crossOrigin = 'Anonymous'
+      el.src = img
+      try {
+        await new Promise<void>((resolve, reject) => {
+          el.onload = () => resolve()
+          el.onerror = () => reject(new Error('load sprite failed'))
+        })
+      } catch {
+        return null
+      }
+      return el
+    })()
+    this.sprite = { img, promise }
+    return promise
+  }
+
+  getImageFromFrameIndex = async (img: string, index: number) => {
+    if (!this.data) throw Error('no init')
+    const sprite = await this.loadSprite(img)
+    if (!sprite) return
+
+    const x = (index % this.data.xCount) * this.data.xSize
+    const y = Math.floor(index / this.data.xCount) * this.data.ySize
+
+    // 只把需要的那一帧从雪碧图裁到小画布，绝不缓存整张大图
     const canvas = createElement('canvas')
-    canvas.width = this.data.xCount * this.data.xSize
-    canvas.height = this.data.yCount * this.data.ySize
-
-    // 这个 ctx 后面会被反复 getImageData 抠预览帧，声明 willReadFrequently 避免 GPU 回读警告
-    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    canvas.width = this.data.xSize
+    canvas.height = this.data.ySize
+    const ctx = canvas.getContext('2d')
     if (!ctx) return
-
-    const imgElement = new Image()
-    imgElement.src = img
-    imgElement.crossOrigin = 'Anonymous'
-    await new Promise((resolve) => {
-      imgElement.onload = resolve
-    })
-    ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height)
-
-    return ctx
-  })
-
-  getImageFromFrameIndex = onceCallWithMap(
-    async (img: string, index: number) => {
-      if (!this.data) throw Error('no init')
-      const ctx = await this.getImageCanvasCtx(img)
-      if (!ctx) return
-
-      const x = (index % this.data.xCount) * this.data.xSize
-      const y = Math.floor(index / this.data.xCount) * this.data.ySize
-
-      const imageData = ctx.getImageData(x, y, this.data.xSize, this.data.ySize)
-
-      const newCanvas = createElement('canvas')
-      newCanvas.width = this.data.xSize
-      newCanvas.height = this.data.ySize
-
-      const newCtx = newCanvas.getContext('2d')
-      if (!newCtx) return
-      newCtx.putImageData(imageData, 0, 0)
-
-      return newCanvas.toDataURL()
-    },
-  )
+    ctx.drawImage(
+      sprite,
+      x,
+      y,
+      this.data.xSize,
+      this.data.ySize,
+      0,
+      0,
+      this.data.xSize,
+      this.data.ySize,
+    )
+    return canvas.toDataURL()
+  }
 
   protected override onUnload(): void {
     this.asyncLock.reWaiting()
     this.data = null
+    this.timeNodesMap.clear()
+    this.sprite = null
   }
 }

@@ -47,7 +47,6 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     const unListenResize = this.on2(PlayerEvent.resize, () => {
       updateSize()
     })
-    console.log('canvasVideo', canvasVideo)
 
     this.unloadPreCanvasVideoStream = () => {
       canvasVideo.stopRenderAsCanvas()
@@ -207,7 +206,6 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     const supportOnVideoChange = supportOnVideoChangeTypes.includes(renderMode)
 
     this.on(PlayerEvent.webVideoChanged, (newVideoEl) => {
-      console.log('observeVideoElChange', newVideoEl)
       this.webVideoEl = newVideoEl
 
       if (!supportOnVideoChange) return

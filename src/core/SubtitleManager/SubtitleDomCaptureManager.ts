@@ -41,7 +41,8 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
   override async onInit() {
     this.on('reset', () => {
       this.#hasObserveSubtitleDom = false
-      this.#observeSubtitleDomUnlisten()
+      this.#observeSubtitleDomUnlistens.forEach((fn) => fn())
+      this.#observeSubtitleDomUnlistens = []
     })
 
     const config = await this.getConfig()
@@ -105,15 +106,13 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
   protected override listenVideoEvents(): void {}
 
   #hasObserveSubtitleDom = false
-  #observeSubtitleDomUnlisten = () => {}
+  #observeSubtitleDomUnlistens: (() => void)[] = []
   private startObserveSubtitleDom() {
     if (this.#hasObserveSubtitleDom) return
     this.#hasObserveSubtitleDom = true
     const config = this.subtitleDomConfig
     for (const node of config.targetEls) {
       const container = dq1(node.container)
-      // const container = node.container ? dq1(node.container) : el?.parentElement
-      console.log('container', container)
       if (!container) throw Error('subtitle dom container not found')
       let preRow: SubtitleRow | undefined
       const observer = new MutationObserver((list) => {
@@ -137,11 +136,7 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
       })
       observer.observe(container, { childList: true, subtree: true })
 
-      // this.addOnUnloadFn(() => observer.disconnect())
-      this.#observeSubtitleDomUnlisten = () => {
-        observer.disconnect()
-        this.#observeSubtitleDomUnlisten = () => {}
-      }
+      this.#observeSubtitleDomUnlistens.push(() => observer.disconnect())
     }
   }
 
@@ -162,6 +157,8 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
 
   override unload(): void {
     super.unload()
-    this.#observeSubtitleDomUnlisten()
+    this.#observeSubtitleDomUnlistens.forEach((fn) => fn())
+    this.#observeSubtitleDomUnlistens = []
+    this.#hasObserveSubtitleDom = false
   }
 }

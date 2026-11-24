@@ -127,8 +127,6 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
         return
       }
     }
-    console.log('解析后的rows', rows)
-
     this.subtitleItems.push({ label, value: label })
     this.subtitleCache.set(cacheKey, { rows })
     this.useSubtitle(label)
