@@ -1,3 +1,10 @@
+## v0.6.69
+
+- Fix long-playback memory growth (~+300MB): the progress-bar preview permanently cached one 4800x2700 sprite canvas per image (~49MB each, 6 images ~= 297MB, never released). Replaced with a single-slot cache that crops just the needed frame on demand.
+- Remove debug logs that retain DOM/arrays (`canvasVideo`, `container`, parsed subtitle rows, `observeVideoElChange`, per-second background `keepAlive`).
+- Fix subtitle DOM observer leak (only the last of multiple target observers was disconnected).
+- Fix `loadedmetadata` listener not removed on player unload.
+
 ## v0.6.68
 
 - 修复控制台 `Canvas2D: Multiple readback operations using getImageData...` 警告：进度条预览帧的 canvas 上下文改用 `{ willReadFrequently: true }`（B站/YouTube 两处），减少 GPU 回读。

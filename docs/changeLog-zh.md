@@ -1,3 +1,10 @@
+## v0.6.69
+
+- 修复长时播放内存持续增长（约 +300MB）：进度条预览把每张 4800×2700 的雪碧图大 canvas 永久缓存（单张≈49MB，整片 6 张≈297MB，常驻不释放）。改为**单槽缓存 + 按需裁单帧**，稳态只保留当前一张雪碧图。
+- 清理长期占内存/刷屏的调试日志：`canvasVideo`、`container`（持 DOM）、`解析后的rows`（持数组）、`observeVideoElChange`、后台 `keepAlive` 每秒日志。
+- 修复字幕 DOM 观察器在多个 targetEl 时只断开最后一个的泄漏。
+- 修复 `loadedmetadata` 监听在播放器卸载时未移除的泄漏。
+
 ## v0.6.68
 
 - 修复控制台 `Canvas2D: Multiple readback operations using getImageData...` 警告：进度条预览帧的 canvas 上下文改用 `{ willReadFrequently: true }`（B站/YouTube 两处），减少 GPU 回读。
